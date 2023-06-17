@@ -45,7 +45,7 @@
                 </p>
             </div>
             <div class="action flex justify-end">
-                <button class="btn px-5 py-2 text-white bg-blue-500 rounded">
+                <button class="btn px-5 py-2 text-white bg-blue-500 rounded" >
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create</span>
                 </button>
@@ -74,12 +74,27 @@ export default {
     },
     computed: {
         isValid() {
-            if (this.errors.name && this.errors.description && this.errors.price && this.errors.image) {
+            if ( this.errors.name === '' &&
+            this.errors.description === '' &&
+            this.errors.price === '' &&
+            this.errors.image === '' &&
+            this.product.name !== '' &&
+            this.product.description !== '' &&
+            this.product.price !== '' &&
+            this.product.image !== '') {
                 return true
             } else {
-                return false
+                
+                this.errors.name = 'Minimum length is 5'
+                this.errors.description = 'Minimum length is 5'
+                this.errors.price = 'Minimum length is 1'
+                this.errors.image = 'Minimum length is 1'
+
+
             }
-        }
+        },
+       
+    
     },
     watch: {
         product: {
