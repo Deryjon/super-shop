@@ -31,7 +31,7 @@
             <!--  -->
             <div class="form-controll mb-1">
                 <label for="price" class="inline-block w-full text-sm text-gray-400">Product price</label>
-                <input type="text" id="price" class="input" v-model.number="product.price" >
+                <input type="text" id="price" class="input" v-model.number="product.price" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <p class="error-message text-xs text-red-400" v-if="errors.price">
                     {{ errors.price }}
                 </p>
