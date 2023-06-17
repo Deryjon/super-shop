@@ -89,7 +89,7 @@ export default {
                 this.errors.description = 'Minimum length is 5'
                 this.errors.price = 'Minimum length is 1'
                 this.errors.image = 'Minimum length is 1'
-
+return false
 
             }
         },
