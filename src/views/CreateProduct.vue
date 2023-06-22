@@ -1,8 +1,10 @@
 <template>
   <main class="container py-[50px]">
     <div class="head flex justify-between items-center">
-      <h2 class="text-3xl text-gray-700">Create product</h2>
-
+      <h2 class="text-3xl text-gray-700">
+        
+      {{ $route.params.id ? 'Edit product' : 'Create product' }}
+      </h2>
       <button
         class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
         @click="$router.push({ name: 'home' })"
@@ -14,9 +16,11 @@
 
     <form
       class="form w-full max-w-[400px] mx-auto p-5 rounded bg-white shadow"
-      @submit.prevent="createProduct"
+      @submit.prevent="handleAction"
     >
-      <h3 class="text-xl mb-2">New product</h3>
+      <h3 class="text-xl mb-2">
+        {{ $route.params.id ? 'Edit ' : 'New product' }}
+      </h3>
       <!--  -->
       <div class="form-controll mb-1">
         <label for="name" class="inline-block w-full text-sm text-gray-400"
@@ -81,14 +85,29 @@
           {{ errors.image }}
         </p>
       </div>
+      <!--  -->
+      <div class="image-preview mb-1" v-if="product.image">
+        <img :src="product.image" alt="preview" class="w-full">
+      </div>
       <div class="action flex justify-end">
         <button
+        v-if="!$route.params.id"
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
-          :class="{ 'opacity-50': !isValid || loading}"
+          :class="{ 'opacity-50': !isValid || loading }"
           :disabled="!isValid || loading"
         >
           <i class="fas fa-plus mr-2" v-if="!loading"></i>
-          <span>{{loading ? "Loading..." : 'Create'}}</span>
+          <span>{{ loading ? "Loading..." : "Create" }}</span>
+        </button>
+
+        <button
+        v-else
+          class="btn px-5 py-2 text-white bg-blue-500 rounded"
+          :class="{ 'opacity-50': !isValid || loading }"
+          :disabled="!isValid || loading"
+        >
+          <i class="fas fa-edit mr-2" v-if="!loading"></i>
+          <span>{{ loading ? "Loading..." : "Edit" }}</span>
         </button>
       </div>
     </form>
@@ -96,15 +115,15 @@
 </template>
 
 <script>
-import http from '../axios.config'
-import { useToast } from "vue-toastification"
+import http from "../axios.config";
+import { useToast } from "vue-toastification";
 
 export default {
   data() {
     return {
       loading: false,
       toast: useToast(),
-      
+
       errors: {
         name: "",
         description: "",
@@ -183,21 +202,54 @@ export default {
     },
   },
   methods: {
+    handleAction() {
+      if(this.$route.params.id) {
+        this.editProduct()
+      } else{
+       this.createProduct()
+      }
+    },
     async createProduct() {
       if (!this.isValid) return;
-      this.loading = true
-      const res = await http.post('/products.json', this.product );
-      this.loading = false
-      this.product = {
+      this.loading = true;
+      const res = await http.post("/products.json", this.product);
+      this.loading = false;
+      (this.product = {
         name: "",
         description: "",
         price: "",
         image: "",
-      },
-      this.toast.success("Product has been created!")
-      this.$router.push({name: 'home'})
+      }),
+        this.toast.success("Product has been created!");
+      this.$router.push({ name: "home" });
+    },
+    async editProduct() {
+      if (!this.isValid) return;
+      const id = this.$route.params.id
+      this.loading = true;
+      const res = await http.patch("/products/"+ id +  ".json", this.product);
+      this.loading = false;
+      (this.product = {
+        name: "",
+        description: "",
+        price: "",
+        image: "",
+      }),
+        this.toast.success("Product has been edited!");
+      this.$router.push({ name: "home" });
+    },
+    async fetchProductById() {
+      const id = this.$route.params.id;
+      if (!id) return;
+      const res = await http.get('/products/' + id + '.json')
+      this.product = res.data
     },
   },
+  mounted() {
+    if(this.$route.params.id){
+      this.fetchProductById()
+    }
+  }
 };
 </script>
 

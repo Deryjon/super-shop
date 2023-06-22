@@ -13,7 +13,11 @@
             </div>
         </div>
         <div class="actions flex gap-2">
-            <button class="btn edit bg-yellow-500 hover:opacity-80">
+            <button class="btn delete bg-blue-500 hover:opacity-80" @click="$emit('cart')">
+                <i class="fas fa-cart-shopping"></i>
+                <span class="ml-2">Cart</span>
+            </button>
+            <button class="btn edit bg-yellow-500 hover:opacity-80" @click="$emit('edit')">
                 <i class="fas fa-edit"></i>
                 <span class="ml-2">Edit</span>
             </button>
@@ -38,6 +42,6 @@ export default {
 
 <style scoped>
 .btn {
-    @apply py-2 text-white font-semibold w-1/2 rounded;
+    @apply py-2 text-white font-semibold w-1/3 rounded;
 }
 </style>
