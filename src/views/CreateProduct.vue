@@ -1,6 +1,6 @@
 <template>
   <main class="container py-[50px]">
-    <div class="head flex justify-between items-center">
+    <div class="head flex justify-between items-center mb-6">
       <h2 class="text-3xl text-gray-700">
         
       {{ $route.params.id ? 'Edit product' : 'Create product' }}
