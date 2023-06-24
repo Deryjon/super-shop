@@ -1,6 +1,6 @@
 <template>
   <main class="container py-[50px]">
-    <div class="head flex justify-between items-center">
+    <div class="head flex gap-10 sm:justify-between items-center">
       <h2 class="text-3xl text-gray-700">SuperMarket</h2>
 
       <div class="">
@@ -12,7 +12,7 @@
           <span>Go to Cart</span>
         </button>
         <button
-          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
+          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80 mt-3"
           @click="$router.push({ name: 'create-product' })"
         >
           <i class="fas fa-plus mr-2"></i>
