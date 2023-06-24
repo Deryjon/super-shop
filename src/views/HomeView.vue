@@ -22,10 +22,13 @@
     </div>
 
     <div class="wrapper flex justify-center gap-4 flex-wrap mt-5">
-      <ProductCardSkeleton v-for="i in 8" v-if="!products.length" />
+      <ProductCardSkeleton
+        v-for="i in 8"
+        v-if="!productStore.getProductList.length"
+      />
       <ProductCard
         v-else
-        v-for="item in products"
+        v-for="item in productStore.getProductList"
         :key="item.id"
         :product="item.data"
         @delete="productToDelete = item.id"
@@ -62,7 +65,7 @@
 
         <div
           class="cart-item p-3 flex justify-between items-center mb-2 shadow"
-          v-for="item in cartItems"
+          v-for="item in cartStore.getCartItems"
           :key="item.cart_id"
         >
           {{ item.data.name }}
@@ -82,15 +85,26 @@
           </div>
           <button
             class="btn py-2 text-sm bg-red-600 w-[35px] text-white rounded"
-            @click="deleteCartProduct(item.cart_id)"
+            @click="deleteCartProduct(item.cart_id, item.data.name)"
           >
             <i class="fas fa-trash"></i>
           </button>
-
         </div>
-        <CartItemSkeleton v-for="item in 12" v-if="!cartItems.length" />
+        <CartItemSkeleton
+          v-for="item in !cartStore.getCartItems
+            ? 12
+            : cartStore.getCartItems.length
+            ? 0
+            : 12"
+          :key="item"
+        />
       </div>
-      <button class="btn bg-yellow-500 p-2 text-">Заказать</button>
+      <button
+        class="btn bg-yellow-500 p-3 text-base text-bold rounded ml-[150px]"
+        @click="orderProduct"
+      >
+        Заказать
+      </button>
     </CurtainPopup>
   </main>
 </template>
@@ -102,8 +116,9 @@ import http from "../axios.config";
 import { useToast } from "vue-toastification";
 import Popup from "../components/Popup.vue";
 import CurtainPopup from "../components/CurtainPopup.vue";
-import Skeleton from "../components/Skeleton.vue";
 import CartItemSkeleton from "../components/CartItem.skeleton.vue";
+import { useProductStore } from "../store/products";
+import { useCartStore } from "../store/cart";
 
 export default {
   components: {
@@ -111,72 +126,55 @@ export default {
     ProductCardSkeleton,
     Popup,
     CurtainPopup,
-    Skeleton,
     CartItemSkeleton,
   },
   data() {
     return {
+      productStore: useProductStore(),
+      cartStore: useCartStore(),
       productToDelete: null,
-      products: [],
-      cartItems: [],
       toast: useToast(),
       showCart: false,
       counts: {},
     };
   },
   methods: {
-    async fetchProducts() {
-      const res = await http.get("/products.json");
-      const productList = [];
-
-      Object.keys(res.data).forEach((key) => {
-        productList.push({ id: key, data: res.data[key] });
-      });
-      this.products = productList;
-    },
     async deleteProduct(id) {
       if (!id) return;
-      const cartItem = this.cartItems.find((item) => item.product_id === id);
+      const cartItem = this.cartStore.getCartItems.find(
+        (item) => item.product_id === id
+      );
       if (cartItem) {
         const cartItemId = cartItem.cart_id;
-        this.cartItems = this.cartItems.filter(
+        this.cartStore.getCartItems = this.cartStore.getCartItems.filter(
           (item) => item.cart_id !== cartItemId
         );
         await http.delete(`/cart/${cartItemId}.json`);
       }
-
-      await http.delete(`/products/${id}.json`);
+      await this.productStore.deleteProduct(id);
       this.productToDelete = null;
       this.toast.success("Product has been deleted!");
-      this.fetchProducts();
+      this.productStore.fetchProducts();
     },
     async addToCart(id, product) {
-      const item = this.cartItems.find((product) => product.product_id === id);
+      const item = this.cartStore.getCartItems.find(
+        (product) => product.product_id === id
+      );
       if (item) {
-        this.toast.warning("Product already in the cart!");
+        this.toast.warning(product.name + " already in the cart!");
         return;
       }
-      const res = await http.post("/cart.json", { id: id, data: product });
+      await this.cartStore.addToCart(id, product);
       this.toast.success(product.name + " - added to cart!");
-      this.fetchCartItems();
+      this.cartStore.fetchCartItems();
     },
-    async fetchCartItems() {
-      const res = await http.get("/cart.json");
-      const items = [];
-      Object.keys(res.data).forEach((key) => {
-        items.push({
-          cart_id: key,
-          product_id: res.data[key].id,
-          data: res.data[key].data,
-        });
-      });
-      this.cartItems = items;
-    },
-    async deleteCartProduct(id) {
+    async deleteCartProduct(id, productName) {
       if (!id) return;
-      await http.delete("/cart/" + id + ".json");
-      this.toast.success("Product has been deleted from cart!");
-      this.fetchCartItems();
+      const name = productName;
+      await this.cartStore.deleteFromCart(id);
+      this.cartStore.fetchCartItems();
+      this.toast.success(name + " removed from cart!");
+      this.showCart = false;
     },
     getCount(cartId) {
       return this.counts[cartId] || 0;
@@ -195,10 +193,25 @@ export default {
         this.counts[cartId]--;
       }
     },
+    orderProduct() {
+      if (this.cartStore.getCartItems.length > 0) {
+        const productNames = this.cartStore.getCartItems.map(
+          (item) => item.data.name
+        );
+        const message =
+          "Спасибо за заказ! Вы заказали следующие продукты:\n" +
+          productNames.join(", ") +
+          "\nСкоро с вами свяжутся!";
+        alert(message);
+      } else {
+        alert("Ваша корзина пуста. Нет продуктов для заказа.");
+      }
+      this.showCart = false;
+    },
   },
   mounted() {
-    this.fetchProducts();
-    this.fetchCartItems();
+    this.productStore.fetchProducts();
+    this.cartStore.fetchCartItems();
   },
 };
 </script>
