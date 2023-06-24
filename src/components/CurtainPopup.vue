@@ -4,7 +4,7 @@
     </Transition>
 
     <Transition name="content">
-        <div class="content w-[400px] bg-white min-h-screen fixed right-0 top-0" v-if="show">
+        <div class="content w-[250px] lg:w-[400px] bg-white min-h-screen fixed right-0 top-0" v-if="show">
             <slot />
         </div>
    

@@ -13,5 +13,8 @@
   </div>
 </template>
 <script>
-export default {};
+import Skeleton from "../components/Skeleton.vue";
+export default {
+  components: {Skeleton},
+};
 </script>

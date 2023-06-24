@@ -117,10 +117,12 @@
 <script>
 import http from "../axios.config";
 import { useToast } from "vue-toastification";
+import { useProductStore } from "../store/products";
 
 export default {
   data() {
     return {
+      productStore: useProductStore(),
       loading: false,
       toast: useToast(),
 
@@ -212,7 +214,7 @@ export default {
     async createProduct() {
       if (!this.isValid) return;
       this.loading = true;
-      const res = await http.post("/products.json", this.product);
+      await this.productStore.createProduct(this.product)
       this.loading = false;
       (this.product = {
         name: "",
@@ -227,7 +229,7 @@ export default {
       if (!this.isValid) return;
       const id = this.$route.params.id
       this.loading = true;
-      const res = await http.patch("/products/"+ id +  ".json", this.product);
+      await this.productStore.editProduct(id, this.product)
       this.loading = false;
       (this.product = {
         name: "",
