@@ -12,11 +12,10 @@
         <span>Go Home</span>
       </v-btn>
     </div>
-
-    <v-sheet class="max-w-[400px] mx-auto">
     <v-form
-      class="form w-full p-5 rounded bg-white shadow"
-      validate-on="submit lazy"
+      ref="form"
+      class="form w-full p-5 max-w-[400px] mx-auto rounded bg-white shadow"
+      lazy-validation
       @submit.prevent="handleAction"
     >
       <h3 class="text-xl mb-2">
@@ -26,10 +25,11 @@
       <div class="form-controll mb-1">
         <v-text-field
           class="inline-block w-full text-sm"
-          :rules="rules"
+          :rules="name"
           label="Product name"
           id="name"
           v-model.trim="product.name"
+          @input="clearError('name')"
         ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.name">
           {{ errors.name }}
@@ -39,10 +39,11 @@
       <div class="form-controll mb-1">
         <v-text-field
           class="inline-block w-full text-sm"
-          :rules="rules"
+          :rules="description"
           label="Product description"
           id="description"
           v-model.trim="product.description"
+          @input="clearError('description')"
         >
         </v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.description">
@@ -53,12 +54,13 @@
       <div class="form-controll mb-1">
         <v-text-field
           class="inline-block w-full text-sm"
-          :rules="rules"
+          :rules="price"
           label="Product price"
           id="price"
           v-model.number="product.price"
           pattern="[0-9]*"
           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+          @input="clearError('price')"
         ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.price">
           {{ errors.price }}
@@ -68,11 +70,12 @@
       <div class="form-controll mb-1">
         <v-text-field
           class="inline-block w-full text-sm"
-          :rules="rules"
+          :rules="image"
           label="Product image"
           id="image"
           v-model.trim="product.image"
           for="image"
+          @input="clearError('image')"
         ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.image">
           {{ errors.image }}
@@ -84,7 +87,7 @@
       </div>
       <div class="action flex justify-end">
         <v-btn
-        type="handleAction"
+          type="handleAction"
           v-if="!$route.params.id"
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
@@ -95,7 +98,7 @@
         </v-btn>
 
         <v-btn
-        type="handleAction"
+          type="handleAction"
           v-else
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
@@ -106,7 +109,6 @@
         </v-btn>
       </div>
     </v-form>
-  </v-sheet>
   </main>
 </template>
 
@@ -138,66 +140,48 @@ export default {
   },
   computed: {
     isValid() {
-      if (
-        this.errors.name === "" &&
-        this.errors.description === "" &&
-        this.errors.price === "" &&
-        this.errors.image === "" &&
-        this.product.name !== "" &&
-        this.product.description !== "" &&
-        this.product.price !== "" &&
-        this.product.image !== ""
-      ) {
-        return true;
-      } else {
-        this.errors.name = "Minimum length is 5";
-        this.errors.description = "Minimum length is 5";
-        this.errors.price = "Minimum length is 1";
-        this.errors.image = "Minimum length is 1";
-        return false;
-      }
-    },
+  this.clearErrors();
+
+  if (this.product.name.length < 5) {
+    this.errors.name = "Minimum length is 5";
+  }
+  if (this.product.description.length < 5) {
+    this.errors.description = "Minimum length is 5";
+  }
+  if (this.product.price.length < 1) {
+    this.errors.price = "Minimum length is 1";
+  } else if (isNaN(Number(this.product.price))) {
+    this.errors.price = "Enter only numbers!";
+  }
+  if (this.product.image.length < 1) {
+    this.errors.image = "Minimum length is 1";
+  } else {
+    const httpRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+    if (!httpRegex.test(this.product.image)) {
+      this.errors.image = "Enter correct image URL!";
+    }
+  }
+
+  for (const errorField in this.errors) {
+    if (this.errors[errorField] !== "") {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
   },
   watch: {
     product: {
-      handler(newValue) {
-        if (newValue.name.length < 5) {
-          this.errors.name = "Minimum length is 5";
-        } else if (newValue.name.length > 20) {
-          this.errors.name = "At least 20 characters!";
-        } else {
-          this.errors.name = "";
-        }
-
-        if (newValue.description.length < 5) {
-          this.errors.description = "Minimum length is 5";
-        } else if (newValue.description.length > 50) {
-          this.errors.description = "At least 50 characters!";
-        } else {
-          this.errors.description = "";
-        }
-
-        if (newValue.price.length < 1) {
-          this.errors.price = "Minimum length is 1";
-        } else if (typeof newValue.price !== "number") {
-          this.errors.price = "Enter only numbers!";
-        } else {
-          this.errors.price = "";
-        }
-
-        const httpRegex =
-          /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
-
-        if (newValue.image.length < 1) {
-          this.errors.image = "Minimum length is 1";
-        } else if (!httpRegex.test(newValue.image)) {
-          this.errors.image = "Enter correct image url!";
-        } else {
-          this.errors.image = "";
-        }
-      },
-      deep: true,
+    handler(newValue) {
+      this.clearError('name');
+      this.clearError('description');
+      this.clearError('price');
+      this.clearError('image');
     },
+    deep: true,
+  },
   },
   methods: {
     handleAction() {
@@ -212,13 +196,14 @@ export default {
       this.loading = true;
       await this.productStore.createProduct(this.product);
       this.loading = false;
-      (this.product = {
+      this.product = {
         name: "",
         description: "",
         price: "",
         image: "",
-      }),
-        this.toast.success("Product has been created!");
+      };
+      this.clearErrors();
+      this.toast.success("Product has been created!");
       this.$router.push({ name: "home" });
     },
     async editProduct() {
@@ -227,13 +212,14 @@ export default {
       this.loading = true;
       await this.productStore.editProduct(id, this.product);
       this.loading = false;
-      (this.product = {
+      this.product = {
         name: "",
         description: "",
         price: "",
         image: "",
-      }),
-        this.toast.success("Product has been edited!");
+      };
+      this.clearErrors();
+      this.toast.success("Product has been edited!");
       this.$router.push({ name: "home" });
     },
     async fetchProductById() {
@@ -241,6 +227,17 @@ export default {
       if (!id) return;
       const res = await http.get("/products/" + id + ".json");
       this.product = res.data;
+    },
+    clearErrors() {
+      this.errors = {
+        name: "",
+        description: "",
+        price: "",
+        image: "",
+      };
+    },
+    clearError(field) {
+      this.errors[field] = "";
     },
   },
   mounted() {
