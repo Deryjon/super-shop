@@ -3,20 +3,23 @@ import http from "../axios.config";
 
 export const useCartStore = defineStore("useCartStore", {
   state: () => ({
-    cartItems: {},
+    cartItems: null,
   }),
   getters: {
     getCartItems: (s) => {
       const items = [];
-      Object.keys(s.cartItems).forEach((key) => {
-        items.push({
-          cart_id: key,
-          product_id: s.cartItems[key].id,
-          data: s.cartItems[key].data,
+      if (s.cartItems && typeof s.cartItems === "object") {
+        Object.keys(s.cartItems).forEach((key) => {
+          items.push({
+            cart_id: key,
+            product_id: s.cartItems[key].id,
+            data: s.cartItems[key].data,
+          });
         });
-      });
+      }
       return items;
     },
+    
   },
   actions: {
     async fetchCartItems() {

@@ -12,7 +12,7 @@
           <span>Go to Cart</span>
         </button>
         <button
-          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80 "
+          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
           @click="$router.push({ name: 'create-product' })"
         >
           <i class="fas fa-plus mr-2"></i>
@@ -91,12 +91,8 @@
           </button>
         </div>
         <CartItemSkeleton
-          v-for="item in !cartStore.getCartItems
-            ? 12
-            : cartStore.getCartItems.length
-            ? 0
-            : 12"
-          :key="item"
+        v-for="i in 8"
+        v-if="!cartStore.getCartItems.length"
         />
       </div>
       <button
@@ -117,8 +113,8 @@ import { useToast } from "vue-toastification";
 import Popup from "../components/Popup.vue";
 import CurtainPopup from "../components/CurtainPopup.vue";
 import CartItemSkeleton from "../components/CartItem.skeleton.vue";
-import { useProductStore } from "../store/products";
-import { useCartStore } from "../store/cart";
+import { useProductStore } from "../store/products.js";
+import { useCartStore } from "../store/cart.js";
 
 export default {
   components: {
@@ -146,9 +142,10 @@ export default {
       );
       if (cartItem) {
         const cartItemId = cartItem.cart_id;
-        this.cartStore.getCartItems = this.cartStore.getCartItems.filter(
+        this.cartStore.getCartItems.filter(
           (item) => item.cart_id !== cartItemId
         );
+
         await http.delete(`/cart/${cartItemId}.json`);
       }
       await this.productStore.deleteProduct(id);
@@ -158,15 +155,15 @@ export default {
     },
     async addToCart(id, product) {
       const item = this.cartStore.getCartItems.find(
-        (product) => product.product_id === id
+        (cartItem) => cartItem.product_id === id
       );
       if (item) {
-        this.toast.warning(product.name + " already in the cart!");
+        this.toast.warning(product.name + " уже в корзине!");
         return;
       }
       await this.cartStore.addToCart(id, product);
-      this.toast.success(product.name + " - added to cart!");
-      this.cartStore.fetchCartItems();
+      this.toast.success(product.name + " добавлен в корзину!");
+      await this.cartStore.fetchCartItems();
     },
     async deleteCartProduct(id, productName) {
       if (!id) return;
