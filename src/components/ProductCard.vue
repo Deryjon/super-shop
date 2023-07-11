@@ -1,32 +1,32 @@
 <template>
-    <div class="product-card p-5 rounded bg-white shadow w-[300px]">
+    <v-card class="product-card p-5 rounded bg-white shadow w-[300px]">
         <div class="image">
             <img :src="product.image" :alt="product.name" class="h-[250px] w-full object-cover rounded">
         </div>
         <div class="text-content">
-            <h3 class="product-name text-xl text-dark-800 my-4">{{ product.name }}</h3>
-            <p class="product-description text-gray-600">
+            <v-card-title class="product-name text-xl text-dark-800 my-4">{{ product.name }}</v-card-title>
+            <v-card-text class="product-description text-gray-600">
                 {{ product.description }}
-            </p>
-            <div class="price">
+            </v-card-text>
+            <v-card-subtitle class="price">
                 <p class="text-cyan-800 font-bold text-xl my-2">${{ product.price }}</p>
-            </div>
+            </v-card-subtitle>
         </div>
-        <div class="actions flex gap-2">
-            <button class="btn delete bg-blue-500 hover:opacity-80" @click="$emit('cart')">
+        <v-card-actions class="actions flex ">
+            <v-btn class="btn delete w-1/3 bg-blue-500 hover:opacity-80" @click="$emit('cart')">
                 <i class="fas fa-cart-shopping"></i>
                 <span class="ml-2">Cart</span>
-            </button>
-            <button class="btn edit bg-yellow-500 hover:opacity-80" @click="$emit('edit')">
+            </v-btn>
+            <v-btn class="btn edit w-1/3 bg-yellow-500 hover:opacity-80" @click="$emit('edit')">
                 <i class="fas fa-edit"></i>
                 <span class="ml-2">Edit</span>
-            </button>
-            <button class="btn delete bg-red-500 hover:opacity-80" @click="$emit('delete')">
+            </v-btn>
+            <v-btn class="btn delete w-1/3 bg-red-500 hover:opacity-80" @click="$emit('delete')">
                 <i class="fas fa-trash"></i>
                 <span class="ml-2">Delete</span>
-            </button>
-        </div>
-    </div>
+            </v-btn>
+        </v-card-actions>
+    </v-card>
 </template>
 
 <script>

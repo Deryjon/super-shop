@@ -4,20 +4,20 @@
       <h2 class="text-3xl text-gray-700 text-center">SuperMarket</h2>
 
       <div class="flex justify-between mt-6">
-        <button
+        <v-btn
           class="btn py-2 mr-2 px-7 bg-yellow-600 text-white rounded hover:opacity-80"
           @click="showCart = true"
         >
           <i class="fas fa-cart-shopping mr-2"></i>
           <span>Go to Cart</span>
-        </button>
-        <button
+        </v-btn>
+        <v-btn
           class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
           @click="$router.push({ name: 'create-product' })"
         >
           <i class="fas fa-plus mr-2"></i>
           <span>Add new</span>
-        </button>
+        </v-btn>
       </div>
     </div>
 
@@ -43,18 +43,18 @@
         <h3 class="text-2xl font-semibold text-center pb-5">Are you sure?</h3>
       </div>
       <div class="actions flex gap-2">
-        <button
+        <v-btn
           class="btn py-2 text-sm bg-gray-600 w-1/2 text-white rounded"
           @click="productToDelete = null"
         >
           Cancel
-        </button>
-        <button
+        </v-btn>
+        <v-btn
           class="btn py-2 text-sm bg-red-600 w-1/2 text-white rounded"
           @click="deleteProduct(productToDelete)"
         >
           Delete
-        </button>
+        </v-btn>
       </div>
     </Popup>
 
@@ -75,32 +75,32 @@
           <div class="counter flex items-center gap-2">
             <span>{{ getCount(item.cart_id) }}</span>
             <div class="buttons flex gap-1 items-center">
-              <button @click="increment(item.cart_id)" class="text-[20px]">
+              <v-btn @click="increment(item.cart_id)" class="text-[20px]">
                 +
-              </button>
-              <button @click="decrement(item.cart_id)" class="text-[20px]">
+              </v-btn>
+              <v-btn @click="decrement(item.cart_id)" class="text-[20px]">
                 -
-              </button>
+              </v-btn>
             </div>
           </div>
-          <button
+          <v-btn
             class="btn py-2 text-sm bg-red-600 w-[35px] text-white rounded"
             @click="deleteCartProduct(item.cart_id, item.data.name)"
           >
             <i class="fas fa-trash"></i>
-          </button>
+          </v-btn>
         </div>
         <CartItemSkeleton
         v-for="i in 8"
         v-if="!cartStore.getCartItems.length"
         />
       </div>
-      <button
+      <v-btn
         class="btn bg-yellow-500 p-3 text-base text-bold rounded ml-[150px]"
         @click="orderProduct"
       >
         Заказать
-      </button>
+      </v-btn>
     </CurtainPopup>
   </main>
 </template>

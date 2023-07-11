@@ -5,13 +5,13 @@
         
       {{ $route.params.id ? 'Edit product' : 'Create product' }}
       </h2>
-      <button
+      <v-btn
         class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
         @click="$router.push({ name: 'home' })"
       >
         <i class="fas fa-home mr-2"></i>
         <span>Go Home</span>
-      </button>
+    </v-btn>
     </div>
 
     <form
@@ -90,7 +90,7 @@
         <img :src="product.image" alt="preview" class="w-full">
       </div>
       <div class="action flex justify-end">
-        <button
+        <v-btn
         v-if="!$route.params.id"
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
@@ -98,9 +98,9 @@
         >
           <i class="fas fa-plus mr-2" v-if="!loading"></i>
           <span>{{ loading ? "Loading..." : "Create" }}</span>
-        </button>
+        </v-btn>
 
-        <button
+        <v-btn
         v-else
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
@@ -108,7 +108,7 @@
         >
           <i class="fas fa-edit mr-2" v-if="!loading"></i>
           <span>{{ loading ? "Loading..." : "Edit" }}</span>
-        </button>
+        </v-btn>
       </div>
     </form>
   </main>

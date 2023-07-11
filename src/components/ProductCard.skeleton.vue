@@ -17,8 +17,9 @@
       </div>
     </div>
     <div class="actions flex gap-2">
-        <Skeleton class="w-1/2 h-[30px] rounded"/>
-        <Skeleton class="w-1/2 h-[30px] rounded"/>
+        <Skeleton class="w-1/3 h-[30px] rounded"/>
+        <Skeleton class="w-1/3 h-[30px] rounded"/>
+        <Skeleton class="w-1/3 h-[30px] rounded"/>
     </div>
   </div>
 </template>

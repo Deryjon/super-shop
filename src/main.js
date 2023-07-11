@@ -1,4 +1,3 @@
-import './assets/tailwind.css'
 import "vue-toastification/dist/index.css"
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -7,6 +6,7 @@ import { Toast, options  } from './lib/toast'
 import { createPinia } from 'pinia'
 
 import vuetify from './lib/vuetify'
+import './assets/tailwind.css'
 
 const pinia = createPinia()
 const app = createApp(App)
