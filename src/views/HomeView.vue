@@ -96,7 +96,7 @@
         />
       </div>
       <v-btn
-        class="btn bg-yellow-500 p-3 text-base text-bold rounded ml-[150px]"
+        class="btn bg-yellow-500 text-base text-bold rounded ml-[150px]"
         @click="orderProduct"
       >
         Заказать
