@@ -2,8 +2,7 @@
   <main class="container py-[50px]">
     <div class="head flex justify-between items-center mb-6">
       <h2 class="text-3xl text-gray-700">
-        
-      {{ $route.params.id ? 'Edit product' : 'Create product' }}
+        {{ $route.params.id ? "Edit product" : "Create product" }}
       </h2>
       <v-btn
         class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
@@ -11,87 +10,82 @@
       >
         <i class="fas fa-home mr-2"></i>
         <span>Go Home</span>
-    </v-btn>
+      </v-btn>
     </div>
 
-    <form
-      class="form w-full max-w-[400px] mx-auto p-5 rounded bg-white shadow"
+    <v-sheet class="max-w-[400px] mx-auto">
+    <v-form
+      class="form w-full p-5 rounded bg-white shadow"
+      validate-on="submit lazy"
       @submit.prevent="handleAction"
     >
       <h3 class="text-xl mb-2">
-        {{ $route.params.id ? 'Edit ' : 'New product' }}
+        {{ $route.params.id ? "Edit " : "New product" }}
       </h3>
       <!--  -->
       <div class="form-controll mb-1">
-        <label for="name" class="inline-block w-full text-sm text-gray-400"
-          >Product name</label
-        >
-        <input
-          type="text"
+        <v-text-field
+          class="inline-block w-full text-sm"
+          :rules="rules"
+          label="Product name"
           id="name"
-          class="input"
           v-model.trim="product.name"
-        />
+        ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.name">
           {{ errors.name }}
         </p>
       </div>
       <!--  -->
       <div class="form-controll mb-1">
-        <label
-          for="description"
-          class="inline-block w-full text-sm text-gray-400"
-          >Product description</label
-        >
-        <input
-          type="text"
+        <v-text-field
+          class="inline-block w-full text-sm"
+          :rules="rules"
+          label="Product description"
           id="description"
-          class="input"
           v-model.trim="product.description"
-        />
+        >
+        </v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.description">
           {{ errors.description }}
         </p>
       </div>
       <!--  -->
       <div class="form-controll mb-1">
-        <label for="price" class="inline-block w-full text-sm text-gray-400"
-          >Product price</label
-        >
-        <input
-          type="text"
+        <v-text-field
+          class="inline-block w-full text-sm"
+          :rules="rules"
+          label="Product price"
           id="price"
-          class="input"
           v-model.number="product.price"
           pattern="[0-9]*"
           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-        />
+        ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.price">
           {{ errors.price }}
         </p>
       </div>
       <!--  -->
       <div class="form-controll mb-1">
-        <label for="image" class="inline-block w-full text-sm text-gray-400"
-          >Product image</label
-        >
-        <input
-          type="text"
+        <v-text-field
+          class="inline-block w-full text-sm"
+          :rules="rules"
+          label="Product image"
           id="image"
-          class="input"
           v-model.trim="product.image"
-        />
+          for="image"
+        ></v-text-field>
         <p class="error-message text-xs text-red-400" v-if="errors.image">
           {{ errors.image }}
         </p>
       </div>
       <!--  -->
       <div class="image-preview mb-1" v-if="product.image">
-        <img :src="product.image" alt="preview" class="w-full">
+        <img :src="product.image" alt="preview" class="w-full" />
       </div>
       <div class="action flex justify-end">
         <v-btn
-        v-if="!$route.params.id"
+        type="handleAction"
+          v-if="!$route.params.id"
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
           :disabled="!isValid || loading"
@@ -101,7 +95,8 @@
         </v-btn>
 
         <v-btn
-        v-else
+        type="handleAction"
+          v-else
           class="btn px-5 py-2 text-white bg-blue-500 rounded"
           :class="{ 'opacity-50': !isValid || loading }"
           :disabled="!isValid || loading"
@@ -110,7 +105,8 @@
           <span>{{ loading ? "Loading..." : "Edit" }}</span>
         </v-btn>
       </div>
-    </form>
+    </v-form>
+  </v-sheet>
   </main>
 </template>
 
@@ -205,16 +201,16 @@ export default {
   },
   methods: {
     handleAction() {
-      if(this.$route.params.id) {
-        this.editProduct()
-      } else{
-       this.createProduct()
+      if (this.$route.params.id) {
+        this.editProduct();
+      } else {
+        this.createProduct();
       }
     },
     async createProduct() {
       if (!this.isValid) return;
       this.loading = true;
-      await this.productStore.createProduct(this.product)
+      await this.productStore.createProduct(this.product);
       this.loading = false;
       (this.product = {
         name: "",
@@ -227,9 +223,9 @@ export default {
     },
     async editProduct() {
       if (!this.isValid) return;
-      const id = this.$route.params.id
+      const id = this.$route.params.id;
       this.loading = true;
-      await this.productStore.editProduct(id, this.product)
+      await this.productStore.editProduct(id, this.product);
       this.loading = false;
       (this.product = {
         name: "",
@@ -243,15 +239,15 @@ export default {
     async fetchProductById() {
       const id = this.$route.params.id;
       if (!id) return;
-      const res = await http.get('/products/' + id + '.json')
-      this.product = res.data
+      const res = await http.get("/products/" + id + ".json");
+      this.product = res.data;
     },
   },
   mounted() {
-    if(this.$route.params.id){
-      this.fetchProductById()
+    if (this.$route.params.id) {
+      this.fetchProductById();
     }
-  }
+  },
 };
 </script>
 

@@ -1,8 +1,8 @@
 <template>
     <v-card class="product-card p-5 rounded bg-white shadow w-[300px]">
-        <div class="image">
+        <v-img class="image">
             <img :src="product.image" :alt="product.name" class="h-[250px] w-full object-cover rounded">
-        </div>
+        </v-img>
         <div class="text-content">
             <v-card-title class="product-name text-xl text-dark-800 my-4">{{ product.name }}</v-card-title>
             <v-card-text class="product-description text-gray-600">
@@ -12,7 +12,7 @@
                 <p class="text-cyan-800 font-bold text-xl my-2">${{ product.price }}</p>
             </v-card-subtitle>
         </div>
-        <v-card-actions class="actions flex ">
+        <v-card-actions class="actions ">
             <v-btn class="btn delete w-1/3 bg-blue-500 hover:opacity-80" @click="$emit('cart')">
                 <i class="fas fa-cart-shopping"></i>
                 <span class="ml-2">Cart</span>
