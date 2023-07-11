@@ -5,14 +5,14 @@
 
       <div class="flex justify-between mt-6">
         <v-btn
-          class="btn py-2 mr-2 px-7 bg-yellow-600 text-white rounded hover:opacity-80"
+          class="btn py-2 mr-1 px-7 bg-yellow-600 text-white rounded hover:opacity-80 w-1/2"
           @click="showCart = true"
         >
           <i class="fas fa-cart-shopping mr-2"></i>
           <span>Go to Cart</span>
         </v-btn>
         <v-btn
-          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80"
+          class="btn py-2 px-7 bg-blue-600 text-white rounded hover:opacity-80 w-1/2"
           @click="$router.push({ name: 'create-product' })"
         >
           <i class="fas fa-plus mr-2"></i>
@@ -72,19 +72,8 @@
           <div class="img h-[50px] w-[80px]">
             <img :src="item.data.image" alt="image" class="w-full h-full" />
           </div>
-          <div class="counter flex items-center gap-2">
-            <span>{{ getCount(item.cart_id) }}</span>
-            <div class="buttons flex gap-1 items-center">
-              <v-btn @click="increment(item.cart_id)" class="text-[20px]">
-                +
-              </v-btn>
-              <v-btn @click="decrement(item.cart_id)" class="text-[20px]">
-                -
-              </v-btn>
-            </div>
-          </div>
           <v-btn
-            class="btn py-2 text-sm bg-red-600 w-[35px] text-white rounded"
+            class="btn lg:py-2  text-sm bg-red-600 w-[35px] text-white rounded"
             @click="deleteCartProduct(item.cart_id, item.data.name)"
           >
             <i class="fas fa-trash"></i>
@@ -96,7 +85,7 @@
         />
       </div>
       <v-btn
-        class="btn bg-yellow-500 text-base text-bold rounded ml-[150px]"
+        class="btn bg-yellow-500 text-base text-bold rounded ml-[60px] lg:ml-[150px]"
         @click="orderProduct"
       >
         Заказать
@@ -172,23 +161,6 @@ export default {
       this.cartStore.fetchCartItems();
       this.toast.success(name + " removed from cart!");
       this.showCart = false;
-    },
-    getCount(cartId) {
-      return this.counts[cartId] || 0;
-    },
-
-    increment(cartId) {
-      if (!this.counts[cartId]) {
-        this.counts[cartId] = 1;
-      } else {
-        this.counts[cartId]++;
-      }
-    },
-
-    decrement(cartId) {
-      if (this.counts[cartId] && this.counts[cartId] > 0) {
-        this.counts[cartId]--;
-      }
     },
     orderProduct() {
       if (this.cartStore.getCartItems.length > 0) {
