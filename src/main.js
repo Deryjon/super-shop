@@ -6,11 +6,13 @@ import router from './router'
 import { Toast, options  } from './lib/toast'
 import { createPinia } from 'pinia'
 
+import vuetify from './lib/vuetify'
 
 const pinia = createPinia()
 const app = createApp(App)
 
 app.use(router)
+app.use(vuetify)
 app.use(pinia)
 app.use(Toast, options)
 
